@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM golang:1.18 as builder
+FROM registry.cn-hangzhou.aliyuncs.com/stone-wlg/golang:1.23.1 as builder
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -14,7 +14,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GO111MODULE=on go build -mod vendor -o /plugin main.go
 
 # we use alpine for easier debugging
-FROM alpine
+FROM registry.cn-hangzhou.aliyuncs.com/stone-wlg/alpine:latest
 
 # Set root path as working directory
 WORKDIR /
