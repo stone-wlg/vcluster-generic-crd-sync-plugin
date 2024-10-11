@@ -3,6 +3,7 @@ package syncer
 import (
 	"context"
 	"fmt"
+
 	"github.com/loft-sh/vcluster-generic-crd-plugin/pkg/config"
 	"github.com/loft-sh/vcluster-generic-crd-plugin/pkg/patches"
 	"github.com/loft-sh/vcluster-sdk/log"
@@ -72,6 +73,7 @@ func (s *patcher) ApplyPatches(ctx context.Context, fromObj, toObj client.Object
 	outObject := toObjCopied.DeepCopy()
 	err = s.toClient.Patch(ctx, outObject, client.Apply, client.ForceOwnership, client.FieldOwner(fieldManager))
 	if err != nil {
+		s.log.Infof("===> apply object, outObject: %v", outObject)
 		return nil, errors.Wrap(err, "apply object")
 	}
 

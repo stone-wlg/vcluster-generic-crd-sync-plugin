@@ -79,18 +79,27 @@ func (f *fromVirtualController) SyncDown(ctx *synccontext.SyncContext, vObj clie
 		return ctrl.Result{}, nil
 	}
 
-	// apply object to physical cluster
-	ctx.Log.Infof("Create physical %s %s/%s, since it is missing, but virtual object exists", f.config.Kind, vObj.GetNamespace(), vObj.GetName())
-	_, err := f.patcher.ApplyPatches(ctx.Context, vObj, nil, f.config.Patches, f.config.ReversePatches, func(vObj client.Object) (client.Object, error) {
-		return f.TranslateMetadata(vObj), nil
-	}, &virtualToHostNameResolver{namespace: vObj.GetNamespace(), targetNamespace: f.targetNamespace})
-	if err != nil {
-		f.EventRecorder().Eventf(vObj, "Warning", "SyncError", "Error syncing to physical cluster: %v", err)
-		return ctrl.Result{}, fmt.Errorf("error applying patches: %v", err)
-	}
+	// // apply object to physical cluster
+	// ctx.Log.Infof("===>: start")
+	// ctx.Log.Infof("Create physical %s %s/%s, since it is missing, but virtual object exists", f.config.Kind, vObj.GetNamespace(), vObj.GetName())
+	// ctx.Log.Infof("===> targetNamespace: %s", f.targetNamespace)
+	// _, err := f.patcher.ApplyPatches(ctx.Context, vObj, nil, f.config.Patches, f.config.ReversePatches, func(vObj client.Object) (client.Object, error) {
+	// 	return f.TranslateMetadata(vObj), nil
+	// }, &virtualToHostNameResolver{namespace: vObj.GetNamespace(), targetNamespace: f.targetNamespace})
+	// if err != nil {
+	// 	ctx.Log.Infof("<===: no")
+	// 	f.EventRecorder().Eventf(vObj, "Warning", "SyncError", "Error syncing to physical cluster: %v", err)
+	// 	return ctrl.Result{}, fmt.Errorf("error applying patches: %v", err)
+	// }
+	// ctx.Log.Infof("<===: yes")
 
-	return ctrl.Result{}, nil
+	// return ctrl.Result{}, nil
+
+	// create object in physical cluster
+	ctx.Log.Infof("SyncDown called for %s", vObj.GetName())
+	return f.SyncDownCreate(ctx, vObj, f.TranslateMetadata(vObj))
 }
+
 func (f *fromVirtualController) isExcluded(pObj client.Object) bool {
 	labels := pObj.GetLabels()
 	return labels == nil || labels[controlledByLabel] != f.getControllerID()
