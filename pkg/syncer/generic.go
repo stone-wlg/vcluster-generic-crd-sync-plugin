@@ -73,7 +73,6 @@ func (s *patcher) ApplyPatches(ctx context.Context, fromObj, toObj client.Object
 	outObject := toObjCopied.DeepCopy()
 	err = s.toClient.Patch(ctx, outObject, client.Apply, client.ForceOwnership, client.FieldOwner(fieldManager))
 	if err != nil {
-		s.log.Infof("===> apply object, outObject: %v", outObject)
 		return nil, errors.Wrap(err, "apply object")
 	}
 

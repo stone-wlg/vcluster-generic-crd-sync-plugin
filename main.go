@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 
 	"github.com/loft-sh/vcluster-generic-crd-plugin/pkg/blockingcacheclient"
@@ -28,6 +29,8 @@ func main() {
 	if err != nil {
 		klog.Fatalf("Error initializing plugin: %v", err)
 	}
+	jsonData, _ := json.Marshal(registerCtx)
+	klog.Infof("registerCtx: %s", string(jsonData))
 	if registerCtx.TargetNamespace == "" {
 		registerCtx.TargetNamespace = registerCtx.CurrentNamespace
 	}
